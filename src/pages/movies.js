@@ -1,34 +1,25 @@
-import React, { useContext, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { axiosInstance } from "../network/axioscongig";
-import {LanguageContext} from "../context/languge";
-import { getMoviesDetail,getMoviesList } from "../store/action/movies";
 
 export default function Movies() {
-  const dispatch = useDispatch();
   const params = useParams();
-  const {lang} = useContext(LanguageContext)  
-  const movieDetails = useSelector((state)=>state.Movies.oneMovie)  
-  const moviesList = useSelector((state)=>state.Movies.moviesList)  
-  useEffect(async () => {
-      dispatch(getMoviesDetail(params.id,{language:lang}))
-      dispatch(getMoviesList({language:lang}))  
-  }, [params.id]);
-
-  // const addFavMovie = (movie) => {
-  //   dispatch(
-  //     addFavHandler({
-  //       id: movie.id,
-  //       poster_path: movie.poster_path,
-  //       title: movie.title,
-  //       vote_average: movie.vote_average,
-  //     })
-  //   );
-  // };
+  console.log(params.id);
+  const [movieList, setMovie] = useState([]);
+  useEffect(() => {
+    axiosInstance
+      .get(`/3/movie/${params.id}`)
+      .then((res) => {
+        console.log(res.data);
+        setMovie([res.data]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
   return (
     <>
-      {moviesList.map((movie, index) => {
+      {movieList.map((movie, index) => {
         return (
             <div
               key={index}
